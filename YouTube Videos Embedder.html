@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+
+<!-- WPA App -->
+<meta content='yes' name='apple-touch-fullscreen' />
+<meta content='yes' name='apple-mobile-web-app-capable' />
+<meta expr:content='data:skin.vars.keycolor' name='theme-color' />
+<meta content='black' name='apple-mobile-web-app-status-bar-style' />
+<meta expr:content='data:blog.title' name='apple-mobile-web-app-title' />
+<meta expr:content='data:skin.vars.keycolor' name='msapplication-TileColor' />
+<meta expr:content='data:skin.vars.keycolor' name='msapplication-navbutton-color'/>
+<meta expr:content='data:blog.blogspotFaviconUrl' name='msapplication-TileImage' />
+<meta expr:content='data:blog.blogspotFaviconUrl' name='apple-touch-startup-image' />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Embedder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff5722;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        input[type="url"],
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #e64a19;
+        }
+
+        #videoContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Video Embedder</h1>
+        
+        <input type="url" id="videoUrl" placeholder="Enter YouTube video link" />
+        <input type="number" id="iframeCount" placeholder="Number of iframes" min="1" />
+        <button id="embedButton">Click here</button>
+        
+        <div id="videoContainer"></div>
+    </div>
+
+    <script>
+        document.getElementById('embedButton').addEventListener('click', function() {
+            const url = document.getElementById('videoUrl').value;
+            const count = parseInt(document.getElementById('iframeCount').value);
+            const videoContainer = document.getElementById('videoContainer');
+            videoContainer.innerHTML = ''; // Clear previous iframes
+
+            if (url && count > 0) {
+                const videoId = getVideoId(url);
+                if (videoId) {
+                    for (let i = 0; i < count; i++) {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+                        iframe.title = "YouTube video player";
+                        videoContainer.appendChild(iframe);
+                    }
+                } else {
+                    alert("Invalid YouTube URL.");
+                }
+            } else {
+                alert("Please enter a valid YouTube link and number of iframes.");
+            }
+        });
+
+        function getVideoId(url) {
+    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:shorts\/|(?:v|e(?:mbed)?|.*[?&]v=)|(?:.+\/\S+\/)|.*[?&]vi=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
+
+    </script>
+</body>
+</html>
