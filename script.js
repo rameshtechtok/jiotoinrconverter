@@ -1,4 +1,3 @@
-
 let exchangeRate = 26.83; // 25.942654
 let isJioCoinToINR = true;
 let history = JSON.parse(localStorage.getItem("conversionHistory")) || [];
@@ -6,8 +5,6 @@ let autoUpdateInterval;
 const resultWrapper = document.querySelector('.result-wrapper');
 const autoManual = document.querySelector('.autoManual');
 const exchangeRateInput = document.getElementById("exchangeRateInput");
-const ctx = document.getElementById("exchangeChart").getContext("2d");
-let chart;
 
 document.getElementById('convert').addEventListener('click', convert);
 document.getElementById('increase').addEventListener('click', () => adjustValue(0.5));
@@ -23,29 +20,29 @@ resultWrapper.style.display = 'none';
 /* Jio To INR */
 document.querySelectorAll('table').forEach((table, tablei) => {
   if (tablei === 0) {
-    table.querySelectorAll('tr').forEach((tableRow)=>{     
+    table.querySelectorAll('tr').forEach((tableRow) => {     
       const tableValue = tableRow.querySelector('.tableValue');
       const tableRate = tableRow.querySelector('.tableRate');
-      tableRate.innerHTML =  "Rs." + tableValue.innerHTML * exchangeRate;
+      tableRate.innerHTML = "Rs." + tableValue.innerHTML * exchangeRate;
     });
   }
   if (tablei === 1) {
     table.querySelectorAll('tr').forEach((tableRow) => {
       const tableValue = tableRow.querySelector('.tableValue');
       const tableRate = tableRow.querySelector('.tableRate');
-      tableRate.innerHTML = '₹'+tableRate.innerHTML;
+      tableRate.innerHTML = '₹' + tableRate.innerHTML;
       let value = tableValue.innerHTML / exchangeRate;
       tableRate.innerHTML = value.toFixed(2);
       tableValue.innerHTML = '₹' + tableValue.innerHTML;
     });
   }
 });
+
 function fetchExchangeRate() {
   exchangeRate = (25 + Math.random()).toFixed(6);
   exchangeRateInput.value = exchangeRate;
   document.querySelector('#exchangeRateb').innerHTML = exchangeRate;
   document.querySelector('.coinPrice').innerHTML = `<b>Jio: ${exchangeRate}</b>`;
-  updateChart();
 }
 
 function updateExchangeRate() {
@@ -53,7 +50,6 @@ function updateExchangeRate() {
     exchangeRate = parseFloat(exchangeRateInput.value) || exchangeRate;
     document.querySelector('#exchangeRateb').innerHTML = exchangeRate;
     document.querySelector('.coinPrice').innerHTML = `<b>Jio: ${exchangeRate}</b>`;
-    updateChart();
   }
 }
 
@@ -64,7 +60,8 @@ function convert() {
   } else {
     let outputValue, resultText;
     resultWrapper.style.display = 'block';
-document.querySelector('.required').style.display = 'none';
+    document.querySelector('.required').style.display = 'none';
+    
     if (isJioCoinToINR) {
       outputValue = inputValue * exchangeRate;
       resultText = `${inputValue} JioCoins = ₹${outputValue.toFixed(2)} INR`;
@@ -74,7 +71,6 @@ document.querySelector('.required').style.display = 'none';
     }
 
     document.querySelector('#result').innerHTML = resultText;
-    resultWrapper.style.display = 'block';
     saveHistory(resultText);
   }
 }
@@ -92,6 +88,7 @@ function shareResult() {
     navigator.share({ title: "JioCoins to INR Converter", text: resultText });
   }
 }
+
 function toggleConverter() {
   isJioCoinToINR = !isJioCoinToINR;
   document.getElementById("converterTitle").innerHTML = isJioCoinToINR ? "JioCoin to INR Converter" : "INR to JioCoin Converter";
@@ -130,28 +127,6 @@ function clearHistory() {
   displayHistory();
 }
 
-function updateChart() {
-  if (!chart) {
-    chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: Array(10).fill(""),
-        datasets: [{
-          label: 'Exchange Rate (INR)',
-          data: Array(10).fill(exchangeRate),
-          borderColor: '#FFC300',
-          fill: true,
-        }]
-      },
-      options: { responsive: true }
-    });
-  } else {
-    chart.data.datasets[0].data.shift();
-    chart.data.datasets[0].data.push(exchangeRate);
-    chart.update();
-  }
-}
-
 exchangeRateInput.setAttribute('disabled', 'disabled');
 
 autoManual.addEventListener('click', () => {
@@ -181,7 +156,36 @@ if (!autoUpdateInterval) {
 
 displayHistory();
 
-
 /* Accordion */
-const accordionButtons=document.querySelectorAll("[data-accordion-target]");let activeAccordionButton=null;function toggleAccordion(clickedButton){const targetPanel=document.querySelector(clickedButton.dataset.accordionTarget);if(activeAccordionButton&&activeAccordionButton!==clickedButton){const activePanel=document.querySelector(activeAccordionButton.dataset.accordionTarget);activePanel.style.maxHeight=null;activeAccordionButton.parentElement.classList.remove("active");}clickedButton.parentElement.classList.toggle("active");activeAccordionButton=clickedButton;if(targetPanel.style.maxHeight){targetPanel.style.maxHeight=null;}else{targetPanel.style.maxHeight=`${targetPanel.scrollHeight}px`;}}accordionButtons.forEach(button=>{button.addEventListener("click",()=>{if(button.classList.contains("active")){button.classList.remove("active");document.querySelector(button.dataset.accordionTarget).style.maxHeight=null;}else{toggleAccordion(button);}});});
+const accordionButtons = document.querySelectorAll("[data-accordion-target]");
+let activeAccordionButton = null;
 
+function toggleAccordion(clickedButton) {
+  const targetPanel = document.querySelector(clickedButton.dataset.accordionTarget);
+  
+  if (activeAccordionButton && activeAccordionButton !== clickedButton) {
+    const activePanel = document.querySelector(activeAccordionButton.dataset.accordionTarget);
+    activePanel.style.maxHeight = null;
+    activeAccordionButton.parentElement.classList.remove("active");
+  }
+
+  clickedButton.parentElement.classList.toggle("active");
+  activeAccordionButton = clickedButton;
+
+  if (targetPanel.style.maxHeight) {
+    targetPanel.style.maxHeight = null;
+  } else {
+    targetPanel.style.maxHeight = `${targetPanel.scrollHeight}px`;
+  }
+}
+
+accordionButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+      document.querySelector(button.dataset.accordionTarget).style.maxHeight = null;
+    } else {
+      toggleAccordion(button);
+    }
+  });
+});
